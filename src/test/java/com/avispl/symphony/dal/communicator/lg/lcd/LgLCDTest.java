@@ -49,6 +49,7 @@ public class LgLCDTest {
 	@Tag("RealDevice")
 	@Test
 	public void testLgLCDDeviceGetStatistic() throws Exception {
+		lgLCDDevice.setHistoricalProperties("temperature");
 		extendedStatistic = (ExtendedStatistics) lgLCDDevice.getMultipleStatistics().get(0);
 		Map<String, String> dynamicStatistic = extendedStatistic.getDynamicStatistics();
 		Map<String, String> statistics = extendedStatistic.getStatistics();
