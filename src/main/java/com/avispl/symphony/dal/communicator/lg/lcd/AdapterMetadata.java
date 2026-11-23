@@ -29,7 +29,7 @@ public class AdapterMetadata {
 	private static final String VERSION_KEY = "adapter.version";
 	private static final String BUILD_DATE_KEY = "adapter.build.date";
 
-	private final Log logger = LogFactory.getLog(getClass());
+	private static final Log LOG = LogFactory.getLog(AdapterMetadata.class);
 	private final Properties properties = new Properties();
 	private final long initializationTimestamp = System.currentTimeMillis();
 
@@ -41,10 +41,10 @@ public class AdapterMetadata {
 			if (in != null) {
 				properties.load(in);
 			} else {
-				logger.warn("Unable to find " + VERSION_PROPERTIES + ", adapter version and build date are not available");
+				LOG.warn("Unable to find " + VERSION_PROPERTIES + ", adapter version and build date are not available");
 			}
 		} catch (IOException e) {
-			logger.warn("Unable to read " + VERSION_PROPERTIES, e);
+			LOG.warn("Unable to read " + VERSION_PROPERTIES, e);
 		}
 	}
 
