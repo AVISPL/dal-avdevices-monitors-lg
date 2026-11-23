@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.avispl.symphony.dal.device.lg.lcd</groupId>
   <artifactId>symphony-dal-communicator-lg-lcd</artifactId>
-  <version>1.4.0</version>
+  <version>1.4.1</version>
   <properties>
     <symphonyApiVersion>RELEASE</symphonyApiVersion>
   </properties>
