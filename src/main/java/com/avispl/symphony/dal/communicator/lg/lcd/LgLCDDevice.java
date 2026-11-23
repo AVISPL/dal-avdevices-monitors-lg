@@ -610,10 +610,10 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 								}
 								stats.put(group + entry.getKey(), entry.getValue());
 							}
-							stats.put(group + LgLCDConstants.PRIORITY_UP, LgLCDConstants.EMPTY_STRING);
+							stats.put(group + LgLCDConstants.PRIORITY_UP, LgLCDConstants.NA);
 							advancedControllableProperties.add(createButton(group + LgLCDConstants.PRIORITY_UP, LgLCDConstants.UP, LgLCDConstants.PROCESSING, 0));
 
-							stats.put(group + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.EMPTY_STRING);
+							stats.put(group + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.NA);
 							advancedControllableProperties.add(createButton(group + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.DOWN, LgLCDConstants.PROCESSING, 0));
 
 							String[] inputSelected = cacheMapOfPriorityInputAndValue.values().stream().filter(item -> !item.equalsIgnoreCase(LgLCDConstants.PLAY_VIA_URL)).collect(Collectors.toList())
@@ -983,16 +983,16 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 			return;
 		}
 		if (!currentPriority.equals(priorityInputStart) && !currentPriority.equals(priorityInputEnd)) {
-			stats.put(groupName + LgLCDConstants.PRIORITY_UP, LgLCDConstants.EMPTY_STRING);
+			stats.put(groupName + LgLCDConstants.PRIORITY_UP, LgLCDConstants.NA);
 			advancedControllableProperties.add(createButton(groupName + LgLCDConstants.PRIORITY_UP, LgLCDConstants.UP, LgLCDConstants.PROCESSING, 0));
 
-			stats.put(groupName + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.EMPTY_STRING);
+			stats.put(groupName + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.NA);
 			advancedControllableProperties.add(createButton(groupName + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.DOWN, LgLCDConstants.PROCESSING, 0));
 		} else if (!StringUtils.isNullOrEmpty(priorityInputEnd) && !currentPriority.equals(priorityInputEnd)) {
-			stats.put(groupName + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.EMPTY_STRING);
+			stats.put(groupName + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.NA);
 			advancedControllableProperties.add(createButton(groupName + LgLCDConstants.PRIORITY_DOWN, LgLCDConstants.DOWN, LgLCDConstants.PROCESSING, 0));
 		} else {
-			stats.put(groupName + LgLCDConstants.PRIORITY_UP, LgLCDConstants.EMPTY_STRING);
+			stats.put(groupName + LgLCDConstants.PRIORITY_UP, LgLCDConstants.NA);
 			advancedControllableProperties.add(createButton(groupName + LgLCDConstants.PRIORITY_UP, LgLCDConstants.UP, LgLCDConstants.PROCESSING, 0));
 		}
 	}
@@ -1246,8 +1246,10 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 		if (!advancedControllableProperties.isEmpty()) {
 			for (AdvancedControllableProperty advancedControllableProperty : advancedControllableProperties) {
 				if (advancedControllableProperty.getName().equals(property)) {
-					extendedStatistics.put(property, value);
-					advancedControllableProperty.setValue(value);
+					// buttons have no state: they always report N/A, not the pressed value
+					String newValue = advancedControllableProperty.getType() instanceof AdvancedControllableProperty.Button ? LgLCDConstants.NA : value;
+					extendedStatistics.put(property, newValue);
+					advancedControllableProperty.setValue(newValue);
 					break;
 				}
 			}
@@ -1328,7 +1330,7 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 				AdvancedControllableProperty controlPower = controlSwitch(controlStatistics, LgLCDConstants.POWER, value, LgLCDConstants.OFF, LgLCDConstants.ON);
 				checkControlPropertyBeforeAddNewProperty(controlPower, advancedControllableProperties);
 
-				controlStatistics.put(LgLCDConstants.REBOOT, LgLCDConstants.EMPTY_STRING);
+				controlStatistics.put(LgLCDConstants.REBOOT, LgLCDConstants.NA);
 				advancedControllableProperties.add(createButton(LgLCDConstants.REBOOT, LgLCDConstants.REBOOT, LgLCDConstants.PROCESSING, 0));
 				break;
 			case ASPECT_RATIO:
@@ -2279,7 +2281,7 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 		button.setLabel(label);
 		button.setLabelPressed(labelPressed);
 		button.setGracePeriod(gracePeriod);
-		return new AdvancedControllableProperty(name, new Date(), button, LgLCDConstants.EMPTY_STRING);
+		return new AdvancedControllableProperty(name, new Date(), button, LgLCDConstants.NA);
 	}
 
 	/**
