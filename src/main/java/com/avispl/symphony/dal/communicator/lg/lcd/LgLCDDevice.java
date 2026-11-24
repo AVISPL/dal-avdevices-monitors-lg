@@ -80,6 +80,11 @@ import com.avispl.symphony.dal.util.StringUtils;
  */
 public class LgLCDDevice extends SocketCommunicator implements Controller, Monitorable {
 
+	/**
+	 * Adapter metadata (version, build date, uptime), reported in the AdapterMetadata group
+	 */
+	private final AdapterMetadata adapterMetadata;
+
 	int monitorID;
 	private int currentCommandIndex = 0;
 	private int defaultConfigTimeout;
@@ -234,6 +239,7 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 	 */
 	public LgLCDDevice() {
 		super();
+		adapterMetadata = new AdapterMetadata();
 		this.setPort(9761);
 		this.monitorID = 1;
 
@@ -913,6 +919,9 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 				//destroy channel after collecting all device's information
 				destroyChannel();
 				if (!isFirstInit && currentGetMultipleInPollingInterval < pollingIntervalInIntValue) {
+					if (localExtendedStatistics.getStatistics() != null) {
+						populateAdapterMetadata(localExtendedStatistics.getStatistics());
+					}
 					return Collections.singletonList(localExtendedStatistics);
 				}
 				//We will check if the value of localCachedFailedMonitor is greater than or equal to the value of currentCommandIndex,
@@ -942,6 +951,7 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 					extendedStatistics.setDynamicStatistics(dynamicStatistics);
 					countControlUnavailable = 0;
 				}
+				populateAdapterMetadata(statistics);
 				extendedStatistics.setStatistics(statistics);
 				extendedStatistics.setControllableProperties(advancedControllableProperties);
 				localExtendedStatistics = extendedStatistics;
@@ -951,6 +961,15 @@ public class LgLCDDevice extends SocketCommunicator implements Controller, Monit
 			reentrantLock.unlock();
 		}
 		return Collections.singletonList(localExtendedStatistics);
+	}
+
+	/**
+	 * Add the AdapterMetadata group (adapter version, build date, uptime) to the statistics
+	 *
+	 * @param statistics statistics to add the properties to
+	 */
+	private void populateAdapterMetadata(Map<String, String> statistics) {
+		adapterMetadata.populate(statistics);
 	}
 
 	/**
